@@ -29,3 +29,6 @@ postgres {
 * `GET /login` to create a new session
 * `GET /` to show the index of all items
 * `GET /item/add` to create a new item
+
+### Example deployment
+* https://campbell-inventory.herokuapp.com/ (using free Heroku dynamo, so initial start will be slow)
