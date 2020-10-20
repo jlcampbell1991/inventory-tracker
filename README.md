@@ -23,3 +23,9 @@ postgres {
   "password": "your_password"
 }
 ```
+
+## Notable endpoints
+* `GET /signup` to create a new user
+* `GET /login` to create a new session
+* `GET /` to show the index of all items
+* `GET /item/add` to create a new item
