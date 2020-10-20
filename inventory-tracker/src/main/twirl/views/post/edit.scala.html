@@ -1,0 +1,3 @@
+@import me.josh.campbell.inventory.tracker.Post
+@(post: Post)
+@views.html.post.form("Update Post", Some(post), post.updateUrl, "post")

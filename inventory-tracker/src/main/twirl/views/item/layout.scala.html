@@ -1,0 +1,35 @@
+@import me.josh.campbell.inventory.tracker.Item
+@(title: String, items: List[Item])
+@views.html.layouts.application(title) {
+  <table><tr><td><h1>@title</h1></td><td><a href="@Item.addUrl">Add new</a></td><td><a href="@Item.indexUrl">All Items</a></td></tr></table>
+  <table class="tbl-disp">
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Date Purchased</th>
+      <th>Purchase Price</th>
+      <th>Date Sold</th>
+      <th>Sale Price</th>
+      <th>Category</th>
+      <th>Where Sold</th>
+      <th>Storage Location</th>
+      <th>Photos Taken</th>
+    </tr>
+  @items.map{ item =>
+    <tr class="rows">
+      <td><a href="@item.showUrl">@item.name</a></td>
+      <td>@item.description</td>
+      <td>@item.date_purchased.getFormValue</td>
+      <td>@item.formattedPurchasePrice</td>
+      <td>@item.date_sold.map(_.getFormValue)</td>
+      <td>@item.formattedSalePrice</td>
+      <td>@item.category</td>
+      <td>@item.where_sold</td>
+      <td>@item.storage_location</td>
+      <td>@item.photos_taken</td>
+      <td><a href="@item.editUrl">Edit</a></td>
+      <td><a href="@item.destroyUrl">Delete</a></td>
+    </tr>
+  }
+  </table>
+}

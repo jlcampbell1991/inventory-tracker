@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="false" debug="false">
+    <!-- This is a Stdout Encoder For When we have Stdout Logging-->
+    <appender name="stdoutLogstash" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <customFields>
+                {
+                "app_name": "inventory-tracker"
+                }
+            </customFields>
+        </encoder>
+    </appender>
+
+    <logger name="com.banno" level="debug"/>
+
+    <root level="WARN">
+        <appender-ref ref="stdoutLogstash"/>
+    </root>
+
+</configuration>

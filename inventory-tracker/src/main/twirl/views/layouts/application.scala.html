@@ -1,0 +1,16 @@
+@(title: String)(body: play.twirl.api.Html)
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Campbell Inventory - @title</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="/javascripts/application.js"></script>
+        <link rel="stylesheet" type="text/css" href="/stylesheets/application.css" />
+    </head>
+    <body>
+        @views.html.layouts.menu()
+        @body
+    </body>
+</html>

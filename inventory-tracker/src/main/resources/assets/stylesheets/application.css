@@ -1,0 +1,14 @@
+.rows:nth-child(even) {
+  background-color: gray;
+  color: white;
+}
+
+td, th {
+  margin-right: 5%;
+}
+
+.tbl-disp {
+  width: 90%;
+  margin: auto;
+  border: 1px solid grey;
+}

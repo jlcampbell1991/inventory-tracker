@@ -1,0 +1,12 @@
+@import me.josh.campbell.inventory.tracker.Post
+@(title: String, post: Option[Post], action: String, method: String)
+
+@views.html.layouts.application(title) {
+  <h1 class="formTitle">@title</h1>
+  <form action="@action" method="@method" id="postForm">
+    outlet: <input type="text" name="outlet">
+    link: <input type="text" name="link">
+    item_id: <input type="text" name="item_id">
+    <input type="submit" value="Submit" id="formButton">
+  </form>
+}

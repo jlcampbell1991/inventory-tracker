@@ -1,0 +1,11 @@
+@import me.josh.campbell.inventory.tracker.User
+
+@views.html.layouts.application("Login") {
+<h1 class="formTitle">Signup!</h1>
+<form action="@User.addUrl" method="post" id="userForm">
+  Username: <input type="text" name="name" value=""></input><br>
+  Password: <input type="password" name="password" value=""></input><br>
+  Confirm Password: <input type="password" name="passwordConfirmation"></input><br>
+  <input type="submit" value="Submit" id="formButton">
+</form>
+}

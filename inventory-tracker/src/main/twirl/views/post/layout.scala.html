@@ -1,0 +1,27 @@
+@import me.josh.campbell.inventory.tracker.Post
+@(title: String, posts: List[Post])
+@views.html.layouts.application(title) {
+  <table><tr><td><h1>@title</h1><td><a href="@Post.indexUrl">All Posts</a></td></tr></table>
+  <table>
+    <tr>
+      <th>ID</th>
+      <th>Outlet</th>
+      <th>Link</th>
+      <th>Item_id</th>
+      <th>Created</th>
+      <th>Last Updated</th>
+    </tr>
+  @posts.map{ post =>
+    <tr>
+      <td><a href="@post.showUrl">@post.id</a></td>
+      <td>@post.outlet</td>
+      <td>@post.link</td>
+      <td>@post.item_id</td>
+      <td>@post.createdAt</td>
+      <td>@post.updatedAt</td>
+      <td><a href="@post.editUrl">Edit</a></td>
+      <td><a href="@post.destroyUrl">Delete</a></td>
+    </tr>
+  }
+  </table>
+}
