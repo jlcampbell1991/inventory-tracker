@@ -13,6 +13,7 @@ lazy val `inventory-tracker` =
       name := "inventory-tracker",
       libraryDependencies ++= Seq(
         "io.circe"              %% "circe-generic"            % circeV,
+        "io.circe"              %% "circe-generic-extras"     % circeV,
         "io.circe"              %% "circe-parser"             % circeV,
         "org.tpolecat"          %% "doobie-core"              % doobieV,
         "org.tpolecat"          %% "doobie-postgres"          % doobieV,

@@ -17,8 +17,8 @@ object UserId {
   def apply(id: String): UserId = UserId(UUID.fromString(id))
   def random: UserId = UserId(UUID.randomUUID)
 
-  implicit val decoder: Decoder[UserId] = deriveDecoder
-  implicit val encoder: Encoder[UserId] = deriveEncoder
+  implicit val decoder: Decoder[UserId] = io.circe.generic.extras.semiauto.deriveUnwrappedDecoder
+  implicit val encoder: Encoder[UserId] = io.circe.generic.extras.semiauto.deriveUnwrappedEncoder
 }
 
 final case class Password(get: String)

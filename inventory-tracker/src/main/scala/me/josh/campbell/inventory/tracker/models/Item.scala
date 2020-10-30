@@ -5,7 +5,7 @@ import cats.implicits._
 import cats.effect.Sync
 import doobie._
 import doobie.implicits._
-import io.circe._, io.circe.generic.semiauto._
+import io.circe._, io.circe.generic.semiauto._, io.circe.generic.extras._
 import org.http4s._
 import org.http4s.UrlForm
 import play.twirl.api.Html
@@ -16,8 +16,8 @@ object ItemId {
   def apply(id: String): ItemId = ItemId(UUID.fromString(id))
   def random: ItemId = ItemId(UUID.randomUUID)
 
-  implicit val decoder: Decoder[ItemId] = deriveDecoder
-  implicit val encoder: Encoder[ItemId] = deriveEncoder
+  implicit val decoder: Decoder[ItemId] = io.circe.generic.extras.semiauto.deriveUnwrappedDecoder
+  implicit val encoder: Encoder[ItemId] = io.circe.generic.extras.semiauto.deriveUnwrappedEncoder
 }
 
 final case class Item(

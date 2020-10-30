@@ -65,6 +65,7 @@ object Date extends doobie.util.meta.TimeMetaInstances with doobie.util.meta.Met
   implicit val get: Get[Date] = Get[LocalDateTime].map(Date(_))
   implicit val put: Put[Date] = Put[LocalDateTime].contramap(_.value)
 
-  implicit val decoder: Decoder[Date] = deriveDecoder
-  implicit val encoer: Encoder[Date] = deriveEncoder
+  implicit val decoder: Decoder[Date] = io.circe.generic.extras.semiauto.deriveUnwrappedDecoder
+  implicit val encoder: Encoder[Date] = io.circe.generic.extras.semiauto.deriveUnwrappedEncoder
+
 }
