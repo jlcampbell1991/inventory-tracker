@@ -6,7 +6,7 @@ import org.http4s._
 import org.http4s.UrlForm
 import doobie._
 import doobie.implicits._
-import io.circe._, io.circe.generic.semiauto._
+import io.circe._, io.circe.generic.semiauto._, io.circe.generic.extras._
 import com.github.t3hnar.bcrypt._
 import java.util.UUID
 
@@ -21,12 +21,13 @@ object UserId {
   implicit val encoder: Encoder[UserId] = io.circe.generic.extras.semiauto.deriveUnwrappedEncoder
 }
 
-final case class Password(get: String)
+final case class Password(get: String) extends AnyVal
 object Password {
   def encrypt(p: String): Password = Password(p.bcrypt)
+  implicit val decoder: Decoder[Password] = io.circe.generic.extras.semiauto.deriveUnwrappedDecoder
 }
 
-final case class User(name: String, unencPass: Password, userId: UserId) {
+final case class User(name: String, unencPass: Password, userId: Option[UserId]) {
   def id: String = userId.toString
   def password: String = unencPass.get
 
@@ -39,7 +40,7 @@ final case class User(name: String, unencPass: Password, userId: UserId) {
   def destroy[F[_]: Sync: Transactor] =
     User.destroy[F](this)
 }
-object User extends Model with Queries {
+object User extends Model with Queries with UserCodec {
   private def confirmPasswordFromForm[F[_]: Sync](form: UrlForm): F[String] =
     form
       .getFirst("passwordConfirmation")
@@ -52,7 +53,7 @@ object User extends Model with Queries {
     for {
       name <- getValueOrRaiseError[F](form, "name")
       password <- confirmPasswordFromForm[F](form)
-    } yield User(name, Password.encrypt(password), UserId.random)
+    } yield User(name, Password.encrypt(password), Some(UserId.random))
 
   def find[F[_]: Sync](id: UserId)(implicit XA: Transactor[F]): F[User] =
     sql"""select * from inventory_tracker_user where id = ${id.toString}"""
@@ -73,7 +74,7 @@ object User extends Model with Queries {
     (
       ${user.name},
       ${user.password},
-      ${user.id}
+      ${UserId.random}
     )
     """.update.withUniqueGeneratedKeys[User]("name", "password", "id").transact(XA)
   }
@@ -91,4 +92,8 @@ object User extends Model with Queries {
 
   def add = views.html.user.signup()
   def addUrl = "/signup"
+}
+
+trait UserCodec {
+  implicit val decoder: Decoder[User] = deriveDecoder
 }

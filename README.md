@@ -35,6 +35,8 @@ postgres {
 * `GET /` to show the index of all items
 * `GET /item/add` to create a new item
 ### JSON API endpoints
+* `POST /api/v1/signup` to create a user and return user token
+  * `curl -X POST -H "Content-Type: application/json" -d '{"name": "jlcampbell1991@gmail.com", "unencPass": "password"}' localhost:8080/api/v1/signup`
 * `POST /api/v1/login` to return a user token
   * `curl -X POST -H "Content-Type: application/json" -d '{"username": "jlcampbell1991@gmail.com", "password": "*****"}' localhost:8080/api/v1/login`
 

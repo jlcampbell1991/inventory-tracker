@@ -28,6 +28,7 @@ trait Routes {
 object Routes {
   private def PublicRoutes[F[_]: Sync: Transactor: Http4sDsl]: HttpRoutes[F] =
     UserRoutes.publicRoutes[F] <+>
+      UserApiRoutes.publicRoutes[F] <+>
       SessionRoutes.publicRoutes[F] <+>
       SessionApiRoutes.publicRoutes[F]
 

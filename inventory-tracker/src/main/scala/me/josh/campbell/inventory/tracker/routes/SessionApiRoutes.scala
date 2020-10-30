@@ -16,7 +16,7 @@ object SessionApiRoutes extends Routes {
         for {
           session <- params.as[Session]
           user <- session.findUser
-          response <- user.fold(BadRequest(""))(u => Ok(Session.cookie(u).content))
+          response <- user.fold(BadRequest(""))(u => Ok(Session.cookie(u).map(_.content)))
         } yield response
       }
     }

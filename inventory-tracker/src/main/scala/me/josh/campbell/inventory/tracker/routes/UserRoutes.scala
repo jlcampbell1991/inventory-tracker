@@ -13,14 +13,14 @@ object UserRoutes extends Routes {
 
     HttpRoutes.of {
       case GET -> Root / "signup" => Ok(User.add)
-      case params @ POST -> Root / "signup" => {
-          for {
-            form <- params.as[UrlForm]
-            user <- User.fromUrlForm(form).flatMap(_.save)
-            cookie = Session.cookie(user)
-            response <- Redirect("/").map(_.addCookie(cookie))
-          } yield response
-        }.handleErrorWith { case _: MalformedMessageBodyFailure => Redirect(User.addUrl) }
+      //   case params @ POST -> Root / "signup" => {
+      //       for {
+      //         form <- params.as[UrlForm]
+      //         user <- User.fromUrlForm(form).flatMap(_.save)
+      //         cookie = Session.cookie(user)
+      //         response <- Redirect("/").map(_.addCookie(cookie))
+      //       } yield response
+      //     }.handleErrorWith { case _: MalformedMessageBodyFailure => Redirect(User.addUrl) }
     }
   }
 

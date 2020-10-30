@@ -32,8 +32,9 @@ object Session extends Model {
   val COOKIE_NAME = "inventory_tracker_cookie"
   private val key = PrivateKey(scala.io.Codec.toUTF8(scala.util.Random.alphanumeric.take(20).mkString("")))
   private val crypto = CryptoBits(key)
-  def cookie(user: User): ResponseCookie =
-    ResponseCookie(name = COOKIE_NAME, content = crypto.signToken(user.id, Instant.now.getEpochSecond.toString))
+  def cookie(user: User): Option[ResponseCookie] = user.userId.map { userId =>
+    ResponseCookie(name = COOKIE_NAME, content = crypto.signToken(userId.toString, Instant.now.getEpochSecond.toString))
+  }
 
   def requestCookie(user: User): RequestCookie =
     RequestCookie(name = COOKIE_NAME, content = crypto.signToken(user.id, Instant.now.getEpochSecond.toString))
