@@ -25,6 +25,7 @@ final case class Password(get: String) extends AnyVal
 object Password {
   def encrypt(p: String): Password = Password(p.bcrypt)
   implicit val decoder: Decoder[Password] = io.circe.generic.extras.semiauto.deriveUnwrappedDecoder
+  implicit val encoder: Encoder[Password] = io.circe.generic.extras.semiauto.deriveUnwrappedEncoder
 }
 
 final case class User(name: String, unencPass: Password, userId: Option[UserId]) {
@@ -84,11 +85,11 @@ object User extends Model with Queries with UserCodec {
       update inventory_tracker_user set
         name = ${user.name},
         password = ${user.password}
-      where id = \{user.id}
+      where id = \{user.userId}
       """.update
 
   def destroy[F[_]: Sync](user: User): Update0 =
-    sql"""delete from inventory_tracker_user where id = ${user.id}""".update
+    sql"""delete from inventory_tracker_user where id = ${user.userId}""".update
 
   def add = views.html.user.signup()
   def addUrl = "/signup"
@@ -96,4 +97,5 @@ object User extends Model with Queries with UserCodec {
 
 trait UserCodec {
   implicit val decoder: Decoder[User] = deriveDecoder
+  implicit val encoder: Encoder[User] = deriveEncoder
 }

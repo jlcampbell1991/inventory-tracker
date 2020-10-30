@@ -36,8 +36,9 @@ object Session extends Model {
     ResponseCookie(name = COOKIE_NAME, content = crypto.signToken(userId.toString, Instant.now.getEpochSecond.toString))
   }
 
-  def requestCookie(user: User): RequestCookie =
-    RequestCookie(name = COOKIE_NAME, content = crypto.signToken(user.id, Instant.now.getEpochSecond.toString))
+  def requestCookie(user: User): Option[RequestCookie] = user.userId.map { userId =>
+    RequestCookie(name = COOKIE_NAME, content = crypto.signToken(userId.toString, Instant.now.getEpochSecond.toString))
+  }
 
   def isLoggedIn(requestHeaders: Headers): Option[UserId] =
     for {
