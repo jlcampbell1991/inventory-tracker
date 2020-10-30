@@ -5,7 +5,6 @@ import cats.effect.Sync
 import org.http4s.circe.CirceEntityCodec._
 import org.http4s.dsl.Http4sDsl
 import org.http4s._
-import org.http4s.twirl._
 import doobie._
 
 object ItemApiRoutes extends Routes {
@@ -19,7 +18,7 @@ object ItemApiRoutes extends Routes {
     val userId: UserId = UserId("e5554a35-1bac-49bc-b63f-834321a4fe47")
     // authedService((userId: UserId) =>
     HttpRoutes.of {
-      case GET -> Root / "api" / "v1" =>
+      case GET -> Root / "api" / "v1" / "items" =>
         for {
           items <- Item.all(userId)
           response <- Ok(items)

@@ -28,7 +28,8 @@ trait Routes {
 object Routes {
   private def PublicRoutes[F[_]: Sync: Transactor: Http4sDsl]: HttpRoutes[F] =
     UserRoutes.publicRoutes[F] <+>
-      SessionRoutes.publicRoutes[F]
+      SessionRoutes.publicRoutes[F] <+>
+      SessionApiRoutes.publicRoutes[F]
 
   private def AuthedRoutes[F[_]: Sync: Transactor: Http4sDsl]: HttpRoutes[F] =
     UserRoutes.authedRoutes[F] <+>

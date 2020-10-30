@@ -4,10 +4,11 @@ import cats.effect.Sync
 import cats.implicits._
 import org.http4s._
 import org.http4s.{Headers, ResponseCookie, UrlForm}
+import org.reactormonk.{CryptoBits, PrivateKey}
 import doobie._
 import doobie.implicits._
 import com.github.t3hnar.bcrypt._
-import org.reactormonk.{CryptoBits, PrivateKey}
+import io.circe._, io.circe.generic.semiauto._
 import java.time._
 
 case class Session(username: String, password: String) extends Queries {
@@ -46,4 +47,7 @@ object Session extends Model {
 
   def login = views.html.session.login()
   def loginUrl = "/login"
+
+  implicit val decoder: Decoder[Session] = deriveDecoder
+  implicit val encoder: Encoder[Session] = deriveEncoder
 }
