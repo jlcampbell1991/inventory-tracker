@@ -29,6 +29,8 @@ final class ItemApiRoutesTest extends BaseTest {
     userId = None
   ).save[IO](user.userId.get).unsafeRunSync
 
+  val destroyableItem: Item = item.copy(name = "destroy me!").save[IO](user.userId.get).unsafeRunSync
+
   """POST -> Root / "api" / "v1" / "item" / "create"""" in {
     check[String](
       service.orNotFound
@@ -56,6 +58,39 @@ final class ItemApiRoutesTest extends BaseTest {
         ),
       Status.Ok,
       Some(item)
+    )
+  }
+  """POST -> Root / "api" / "v1" / "item" / id / "update"""" in {
+    check[String](
+      service.orNotFound
+        .run(
+          Request[IO](
+            method = Method.POST,
+            uri = Uri.unsafeFromString(s"/api/v1/item/${item.id.get.value.toString}/update")
+          ).withEntity(
+              item.copy(name = "updated name")
+            )
+            .withHeaders(
+              Header("auth_token", cookie.get)
+            )
+        ),
+      Status.Ok,
+      None
+    )
+  }
+  """GET -> Root / "api" / "v1" / "item" / id / "destroy"""" in {
+    check[String](
+      service.orNotFound
+        .run(
+          Request[IO](
+            method = Method.GET,
+            uri = Uri.unsafeFromString(s"/api/v1/item/${destroyableItem.id.get.value.toString}/destroy")
+          ).withHeaders(
+            Header("auth_token", cookie.get)
+          )
+        ),
+      Status.Ok,
+      Some("Item ${destroyableItem.id.get.value.toString} destroyed")
     )
   }
 }

@@ -34,17 +34,13 @@ object ItemApiRoutes extends Routes {
           } yield response
         case req @ POST -> Root / "api" / "v1" / "item" / id / "update" =>
           for {
-            form <- req.as[UrlForm]
-            item <- Item
-              .fromUrlForm(form)
-              .map(_.copy(id = Some(ItemId(id))))
-              .flatMap(_.update(userId))
+            item <- req.as[Item].flatMap(_.update(userId))
             response <- Ok(item)
           } yield response
         case GET -> Root / "api" / "v1" / "item" / id / "destroy" =>
           for {
             _ <- Item.destroy(Some(ItemId(id)), userId)
-            response <- Redirect(Item.indexUrl)
+            response <- Ok(s"Item $id destroyed")
           } yield response
       }
     )
