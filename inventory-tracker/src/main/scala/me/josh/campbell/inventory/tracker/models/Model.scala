@@ -3,6 +3,7 @@ package me.josh.campbell.inventory.tracker
 import cats.implicits._
 import cats.effect.Sync
 import doobie._
+import io.circe._, io.circe.generic.semiauto._
 import java.time.{LocalDate, LocalDateTime, Month}
 import java.time.format.DateTimeFormatter
 import java.util.UUID
@@ -63,4 +64,7 @@ object Date extends doobie.util.meta.TimeMetaInstances with doobie.util.meta.Met
 
   implicit val get: Get[Date] = Get[LocalDateTime].map(Date(_))
   implicit val put: Put[Date] = Put[LocalDateTime].contramap(_.value)
+
+  implicit val decoder: Decoder[Date] = deriveDecoder
+  implicit val encoer: Encoder[Date] = deriveEncoder
 }

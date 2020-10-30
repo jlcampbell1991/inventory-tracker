@@ -32,7 +32,10 @@ object Routes {
 
   private def AuthedRoutes[F[_]: Sync: Transactor: Http4sDsl]: HttpRoutes[F] =
     UserRoutes.authedRoutes[F] <+>
-      SessionRoutes.authedRoutes[F] <+> ItemRoutes.authedRoutes[F] <+> PostRoutes.authedRoutes[F]
+      SessionRoutes.authedRoutes[F] <+>
+      ItemRoutes.authedRoutes[F] <+>
+      PostRoutes.authedRoutes[F] <+>
+      ItemApiRoutes.authedRoutes[F]
 
   def routes[F[_]: Sync: Transactor](AssetsRoutes: HttpRoutes[F]): HttpRoutes[F] = {
     implicit val dsl = new Http4sDsl[F] {}

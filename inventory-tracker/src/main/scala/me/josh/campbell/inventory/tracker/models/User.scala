@@ -6,6 +6,7 @@ import org.http4s._
 import org.http4s.UrlForm
 import doobie._
 import doobie.implicits._
+import io.circe._, io.circe.generic.semiauto._
 import com.github.t3hnar.bcrypt._
 import java.util.UUID
 
@@ -15,6 +16,9 @@ final case class UserId(id: UUID) {
 object UserId {
   def apply(id: String): UserId = UserId(UUID.fromString(id))
   def random: UserId = UserId(UUID.randomUUID)
+
+  implicit val decoder: Decoder[UserId] = deriveDecoder
+  implicit val encoder: Encoder[UserId] = deriveEncoder
 }
 
 final case class Password(get: String)

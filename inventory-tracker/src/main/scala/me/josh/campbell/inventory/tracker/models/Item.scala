@@ -5,6 +5,7 @@ import cats.implicits._
 import cats.effect.Sync
 import doobie._
 import doobie.implicits._
+import io.circe._, io.circe.generic.semiauto._
 import org.http4s._
 import org.http4s.UrlForm
 import play.twirl.api.Html
@@ -14,6 +15,9 @@ final case class ItemId(value: UUID)
 object ItemId {
   def apply(id: String): ItemId = ItemId(UUID.fromString(id))
   def random: ItemId = ItemId(UUID.randomUUID)
+
+  implicit val decoder: Decoder[ItemId] = deriveDecoder
+  implicit val encoder: Encoder[ItemId] = deriveEncoder
 }
 
 final case class Item(
@@ -60,7 +64,7 @@ final case class Item(
     sale_price.map(formatCurrency(_))
 }
 
-object Item extends Model with ItemQueries with ItemViews {
+object Item extends Model with ItemQueries with ItemViews with ItemCodec {
 
   def fromUrlForm[F[_]: Sync](form: UrlForm): F[Item] =
     for {
@@ -208,4 +212,9 @@ trait ItemViews extends Views {
 
   def destroyUrl(maybeId: Option[ItemId]): String =
     getUrlOrDefault[ItemId](maybeId, id => s"""/item/${id.value.toString}/destroy""")
+}
+
+trait ItemCodec {
+  implicit val decoder: Decoder[Item] = deriveDecoder
+  implicit val encoder: Encoder[Item] = deriveEncoder
 }
