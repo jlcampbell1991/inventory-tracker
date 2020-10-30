@@ -44,9 +44,6 @@ object Session extends Model {
       userId <- crypto.validateSignedToken(token.value)
     } yield UserId(userId)
 
-  def login = views.html.session.login()
-  def loginUrl = "/login"
-
   implicit val decoder: Decoder[Session] = deriveDecoder
   implicit val encoder: Encoder[Session] = deriveEncoder
 }

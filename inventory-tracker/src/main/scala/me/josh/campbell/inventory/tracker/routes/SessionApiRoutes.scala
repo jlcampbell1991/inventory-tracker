@@ -5,7 +5,6 @@ import cats.effect.Sync
 import org.http4s.dsl.Http4sDsl
 import org.http4s.circe.CirceEntityCodec._
 import org.http4s._
-import org.http4s.twirl._
 import doobie._
 
 object SessionApiRoutes extends Routes {

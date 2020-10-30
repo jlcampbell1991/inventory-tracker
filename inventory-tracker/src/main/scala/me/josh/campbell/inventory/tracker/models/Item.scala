@@ -7,8 +7,6 @@ import doobie._
 import doobie.implicits._
 import io.circe._, io.circe.generic.semiauto._, io.circe.generic.extras._
 import org.http4s._
-import org.http4s.UrlForm
-import play.twirl.api.Html
 import java.util.UUID
 
 final case class ItemId(value: UUID)
@@ -42,18 +40,6 @@ final case class Item(
 
   def destroy[F[_]: Sync: Transactor](userId: UserId): F[Int] = Item.destroy[F](this.id, userId)
 
-  def show: Html = Item.show(this)
-
-  def showUrl: String = Item.showUrl(this.id)
-
-  def edit(posts: List[Post]): Html = Item.edit(this, posts)
-
-  def editUrl: String = Item.editUrl(this.id)
-
-  def updateUrl: String = Item.updateUrl(this.id)
-
-  def destroyUrl: String = Item.destroyUrl(this.id)
-
   private def formatCurrency(double: Double): String =
     "$" + f"$double%1.2f"
 
@@ -64,37 +50,7 @@ final case class Item(
     sale_price.map(formatCurrency(_))
 }
 
-object Item extends Model with ItemQueries with ItemViews with ItemCodec {
-
-  def fromUrlForm[F[_]: Sync](form: UrlForm): F[Item] =
-    for {
-      name <- getValueOrRaiseError[F](form, "name")
-      description <- getValueOrRaiseError[F](form, "description")
-      date_purchased <- getValueOrRaiseError[F](form, "date_purchased")
-      date_sold <- getOptionalValue[F](form, "date_sold")
-      purchase_price <- getValueOrRaiseError[F](form, "purchase_price")
-      sale_price <- getOptionalValue[F](form, "sale_price")
-      category <- getValueOrRaiseError[F](form, "category")
-      where_sold <- getOptionalValue[F](form, "where_sold")
-      storage_location <- getValueOrRaiseError[F](form, "storage_location")
-      photos_taken <- getBooleanOrRaiseError[F](form, "photos_taken")
-    } yield Item(
-      name,
-      description,
-      Date.fromForm(date_purchased).getOrElse(Date.now),
-      date_sold.flatMap(Date.fromForm(_)),
-      purchase_price.toDouble,
-      sale_price.map(_.toDouble),
-      category,
-      where_sold,
-      storage_location,
-      photos_taken,
-      None,
-      None,
-      None,
-      None
-    )
-}
+object Item extends Model with ItemQueries with ItemCodec
 
 trait ItemQueries extends Queries {
   def all[F[_]: Sync](userId: UserId)(implicit XA: Transactor[F]): F[List[Item]] =
@@ -182,36 +138,6 @@ trait ItemQueries extends Queries {
 
   def destroy[F[_]: Sync](id: Option[ItemId], userId: UserId)(implicit XA: Transactor[F]): F[Int] =
     sql"""delete from inventory_tracker_item where id = ${id} and user_id = ${userId.id}""".update.run.transact(XA)
-}
-
-trait ItemViews extends Views {
-  def default: String = indexUrl
-
-  def index(items: List[Item]): Html = views.html.item.index(items)
-
-  def indexUrl: String = s"""/"""
-
-  def show(item: Item): Html = views.html.item.show(item)
-
-  def showUrl(maybeId: Option[ItemId]): String =
-    getUrlOrDefault[ItemId](maybeId, id => s"""/item/${id.value.toString}""")
-
-  def add: Html = views.html.item.add()
-
-  def addUrl: String = s"""/item/add"""
-
-  def createUrl: String = s"""/item/create"""
-
-  def edit(item: Item, posts: List[Post]): Html = views.html.item.edit(item, posts)
-
-  def editUrl(maybeId: Option[ItemId]): String =
-    getUrlOrDefault[ItemId](maybeId, id => s"""/item/${id.value.toString}/edit""")
-
-  def updateUrl(maybeId: Option[ItemId]): String =
-    getUrlOrDefault[ItemId](maybeId, id => s"""/item/${id.value.toString}/update""")
-
-  def destroyUrl(maybeId: Option[ItemId]): String =
-    getUrlOrDefault[ItemId](maybeId, id => s"""/item/${id.value.toString}/destroy""")
 }
 
 trait ItemCodec {

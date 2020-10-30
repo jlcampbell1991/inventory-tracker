@@ -5,8 +5,6 @@ import cats.effect.Sync
 import doobie._
 import doobie.implicits._
 import org.http4s._
-import org.http4s.UrlForm
-import play.twirl.api.Html
 import java.util.UUID
 
 final case class PostId(value: UUID)
@@ -29,29 +27,9 @@ final case class Post(
   def update[F[_]: Sync: Transactor](userId: UserId): F[Post] = Post.update[F](this, userId)
 
   def destroy[F[_]: Sync: Transactor](userId: UserId): F[Int] = Post.destroy[F](this.id, userId)
-
-  def show: Html = Post.show(this)
-
-  def showUrl: String = Post.showUrl(this.id)
-
-  def edit: Html = Post.edit(this)
-
-  def editUrl: String = Post.editUrl(this.id)
-
-  def updateUrl: String = Post.updateUrl(item_id, this.id)
-
-  def destroyUrl: String = Post.destroyUrl(this.id)
 }
 
-object Post extends Model with PostQueries with PostViews {
-
-  def fromUrlForm[F[_]: Sync](form: UrlForm, itemId: ItemId): F[Post] =
-    for {
-      outlet <- getValueOrRaiseError[F](form, "outlet")
-      link <- getValueOrRaiseError[F](form, "link")
-    } yield Post(outlet, link, itemId, None, None, None, None)
-
-}
+object Post extends Model with PostQueries
 
 trait PostQueries extends Queries {
   def all[F[_]: Sync](userId: UserId)(implicit XA: Transactor[F]): F[List[Post]] =
@@ -100,34 +78,4 @@ trait PostQueries extends Queries {
 
   def destroy[F[_]: Sync](id: Option[PostId], userId: UserId)(implicit XA: Transactor[F]): F[Int] =
     sql"""delete from inventory_tracker_post where id = ${id} and user_id = ${userId.id}""".update.run.transact(XA)
-}
-
-trait PostViews extends Views {
-  def default: String = indexUrl
-
-  def index(posts: List[Post]): Html = views.html.post.index(posts)
-
-  def indexUrl: String = s"""/posts"""
-
-  def show(post: Post): Html = views.html.post.show(post)
-
-  def showUrl(maybeId: Option[PostId]): String =
-    getUrlOrDefault[PostId](maybeId, id => s"""/post/${id.value.toString}""")
-
-  def add(itemId: ItemId): Html = views.html.post.add(itemId)
-
-  def addUrl(itemId: ItemId): String = s"""/item/${itemId.value.toString}/post/add"""
-
-  def createUrl(itemId: ItemId): String = s"""/item/${itemId.value.toString}/post/create"""
-
-  def edit(post: Post): Html = views.html.post.edit(post)
-
-  def editUrl(maybeId: Option[PostId]): String =
-    getUrlOrDefault[PostId](maybeId, id => s"""/post/${id.value.toString}/edit""")
-
-  def updateUrl(itemId: ItemId, maybeId: Option[PostId]): String =
-    getUrlOrDefault[PostId](maybeId, id => s"""/item/${itemId.value.toString}/post/${id.value.toString}/update""")
-
-  def destroyUrl(maybeId: Option[PostId]): String =
-    getUrlOrDefault[PostId](maybeId, id => s"""/post/${id.value.toString}/destroy""")
 }

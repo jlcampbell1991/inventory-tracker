@@ -35,13 +35,6 @@ trait Queries {
   implicit val uuidPut: Put[UUID] = Put[String].contramap(_.toString)
 }
 
-trait Views {
-  def default: String
-
-  protected def getUrlOrDefault[A](id: Option[A], s: A => String) =
-    id.map(s).getOrElse(default)
-}
-
 case class Date(value: LocalDateTime) {
   def getFormValue: String =
     value.format(Date.formatter)

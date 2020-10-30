@@ -3,7 +3,6 @@ package me.josh.campbell.inventory.tracker
 import cats.implicits._
 import cats.effect.Sync
 import org.http4s._
-import org.http4s.UrlForm
 import doobie._
 import doobie.implicits._
 import io.circe._, io.circe.generic.semiauto._, io.circe.generic.extras._
@@ -42,20 +41,6 @@ final case class User(name: String, unencPass: Password, userId: Option[UserId])
     User.destroy[F](this)
 }
 object User extends Model with Queries with UserCodec {
-  private def confirmPasswordFromForm[F[_]: Sync](form: UrlForm): F[String] =
-    form
-      .getFirst("passwordConfirmation")
-      .flatMap(pwc => form.getFirst("password").filter(_ == pwc))
-      .fold(Sync[F].raiseError[String](MalformedMessageBodyFailure("Password and confirmation don't match")))(
-        Sync[F].pure
-      )
-
-  def fromUrlForm[F[_]: Sync](form: UrlForm): F[User] =
-    for {
-      name <- getValueOrRaiseError[F](form, "name")
-      password <- confirmPasswordFromForm[F](form)
-    } yield User(name, Password.encrypt(password), Some(UserId.random))
-
   def find[F[_]: Sync](id: UserId)(implicit XA: Transactor[F]): F[User] =
     sql"""select * from inventory_tracker_user where id = ${id.toString}"""
       .query[User]
@@ -90,9 +75,6 @@ object User extends Model with Queries with UserCodec {
 
   def destroy[F[_]: Sync](user: User): Update0 =
     sql"""delete from inventory_tracker_user where id = ${user.userId}""".update
-
-  def add = views.html.user.signup()
-  def addUrl = "/signup"
 }
 
 trait UserCodec {
