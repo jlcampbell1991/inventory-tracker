@@ -16,28 +16,23 @@ trait Routes {
     SeeOther(Location(Uri(authority = Some(Authority(host = RegName(uri))))))
   }
 
-  def authedService[F[_]: Sync: Http4sDsl](service: UserId => HttpRoutes[F]): HttpRoutes[F] = Kleisli {
+  def authedService[F[_]: Sync](service: UserId => HttpRoutes[F])(implicit dsl: Http4sDsl[F]): HttpRoutes[F] = Kleisli {
+    import dsl._
     (req: Request[F]) =>
       Session.isLoggedIn(req.headers) match {
         case Some(id: UserId) => service(id)(req)
-        case None => OptionT.liftF(Redirect(Session.loginUrl))
+        case None => OptionT.liftF(BadRequest("NOT AUTHORIZED FOOL"))
       }
   }
 }
 
 object Routes {
   private def PublicRoutes[F[_]: Sync: Transactor: Http4sDsl]: HttpRoutes[F] =
-    UserRoutes.publicRoutes[F] <+>
-      UserApiRoutes.publicRoutes[F] <+>
-      SessionRoutes.publicRoutes[F] <+>
+    UserApiRoutes.publicRoutes[F] <+>
       SessionApiRoutes.publicRoutes[F]
 
   private def AuthedRoutes[F[_]: Sync: Transactor: Http4sDsl]: HttpRoutes[F] =
-    UserRoutes.authedRoutes[F] <+>
-      SessionRoutes.authedRoutes[F] <+>
-      ItemRoutes.authedRoutes[F] <+>
-      PostRoutes.authedRoutes[F] <+>
-      ItemApiRoutes.authedRoutes[F]
+    ItemApiRoutes.authedRoutes[F]
 
   def routes[F[_]: Sync: Transactor](AssetsRoutes: HttpRoutes[F]): HttpRoutes[F] = {
     implicit val dsl = new Http4sDsl[F] {}

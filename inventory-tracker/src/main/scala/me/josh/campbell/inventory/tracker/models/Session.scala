@@ -4,6 +4,7 @@ import cats.effect.Sync
 import cats.implicits._
 import org.http4s._
 import org.http4s.{Headers, ResponseCookie, UrlForm}
+import org.http4s.util.CaseInsensitiveString
 import org.reactormonk.{CryptoBits, PrivateKey}
 import doobie._
 import doobie.implicits._
@@ -23,15 +24,12 @@ case class Session(username: String, password: String) extends Queries {
     else None
 }
 object Session extends Model {
-  def fromUrlForm[F[_]: Sync](form: UrlForm): F[Session] =
-    for {
-      name <- getValueOrRaiseError[F](form, "name")
-      password <- getValueOrRaiseError[F](form, "password")
-    } yield Session(name, password)
-
   val COOKIE_NAME = "inventory_tracker_cookie"
+
   private val key = PrivateKey(scala.io.Codec.toUTF8(scala.util.Random.alphanumeric.take(20).mkString("")))
+
   private val crypto = CryptoBits(key)
+
   def cookie(user: User): Option[ResponseCookie] = user.userId.map { userId =>
     ResponseCookie(name = COOKIE_NAME, content = crypto.signToken(userId.toString, Instant.now.getEpochSecond.toString))
   }
@@ -42,10 +40,9 @@ object Session extends Model {
 
   def isLoggedIn(requestHeaders: Headers): Option[UserId] =
     for {
-      header <- headers.Cookie.from(requestHeaders)
-      cookie <- header.values.toList.find(_.name == COOKIE_NAME)
-      token <- crypto.validateSignedToken(cookie.content)
-    } yield UserId(token)
+      token <- requestHeaders.get(CaseInsensitiveString("auth_token"))
+      userId <- crypto.validateSignedToken(token.value)
+    } yield UserId(userId)
 
   def login = views.html.session.login()
   def loginUrl = "/login"

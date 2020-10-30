@@ -32,7 +32,11 @@ postgres {
 * `POST /api/v1/signup` to create a user and return user token
   * `curl -X POST -H "Content-Type: application/json" -d '{"name": "jlcampbell1991@gmail.com", "unencPass": "password"}' localhost:8080/api/v1/signup`
 * `POST /api/v1/login` to return a user token
-  * `curl -X POST -H "Content-Type: application/json" -d '{"username": "jlcampbell1991@gmail.com", "password": "*****"}' localhost:8080/api/v1/login`
+  * `curl -X POST -H "Content-Type: application/json" -d '{"username": "jlcampbell1991@gmail.com", "password": "password"}' localhost:8080/api/v1/login`
+* `GET /api/v1/item/{id}` to retrieve an item by id
+  * `curl -H "Content-Type: application/json" -H "auth_token: 0ec0b5f827e79197984394073d3768a1b22027f6-1604091056-7b91f3cb-64bc-484d-bf05-4a1f151dee00" localhost:8080/api/v1/item/5abc8fcf-3412-483d-9de4-21bdfa63d59d`
+* `POST /api/vi/item` to create an item
+  * `curl -X POST -H "Content-Type: application/json" -H "auth_token: 0ec0b5f827e79197984394073d3768a1b22027f6-1604091056-7b91f3cb-64bc-484d-bf05-4a1f151dee00" -d '{"name": "String", "description": "String", "date_purchased": "2020-10-30T15:37:27.830", "purchase_price": 6.0, "category": "String", "storage_location": "String", "photos_taken": true}' localhost:8080/api/v1/item/create`
 
 ### Example deployment
 * https://campbell-inventory.herokuapp.com/ (using free Heroku dynamo, so initial start will be slow)
