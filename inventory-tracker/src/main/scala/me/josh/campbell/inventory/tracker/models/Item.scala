@@ -1,12 +1,12 @@
 package me.josh.campbell.inventory.tracker
 
 import Date._
-import cats.implicits._
+// import cats.implicits._
 import cats.effect.Sync
 import doobie._
 import doobie.implicits._
-import io.circe._, io.circe.generic.semiauto._, io.circe.generic.extras._
-import org.http4s._
+import io.circe._, io.circe.generic.semiauto._
+// import org.http4s._
 import java.util.UUID
 
 final case class ItemId(value: UUID)
@@ -29,10 +29,10 @@ final case class Item(
     where_sold: Option[String],
     storage_location: String,
     photos_taken: Boolean,
-    createdAt: Option[Date],
-    updatedAt: Option[Date],
-    id: Option[ItemId],
-    userId: Option[UserId]
+    // createdAt: Option[Date],
+    // updatedAt: Option[Date],
+    id: Option[ItemId]
+    // userId: Option[UserId]
 ) {
   def save[F[_]: Sync: Transactor](userId: UserId): F[Item] = Item.create[F](this, userId)
 
@@ -55,12 +55,34 @@ object Item extends Model with ItemQueries with ItemCodec
 trait ItemQueries extends Queries {
   def all[F[_]: Sync](userId: UserId)(implicit XA: Transactor[F]): F[List[Item]] =
     sql"""
-      select * from inventory_tracker_item where user_id = ${userId}
+      select
+        name,
+        description,
+        date_purchased,
+        date_sold,
+        purchase_price,
+        sale_price,
+        category,
+        where_sold,
+        storage_location,
+        photos_taken,
+        id from inventory_tracker_item where user_id = ${userId}
     """.query[Item].to[List].transact(XA)
 
   def find[F[_]: Sync](itemId: ItemId, userId: UserId)(implicit XA: Transactor[F]): F[Item] =
     sql"""
-     select * from inventory_tracker_item where id = ${itemId.value} and user_id = ${userId.id}
+     select
+       name,
+       description,
+       date_purchased,
+       date_sold,
+       purchase_price,
+       sale_price,
+       category,
+       where_sold,
+       storage_location,
+       photos_taken,
+       id from inventory_tracker_item where id = ${itemId.value} and user_id = ${userId.id}
     """.query[Item].unique.transact(XA)
 
   def create[F[_]: Sync](item: Item, userId: UserId)(implicit XA: Transactor[F]): F[Item] =
@@ -94,10 +116,7 @@ trait ItemQueries extends Queries {
         "where_sold",
         "storage_location",
         "photos_taken",
-        "created_at",
-        "updated_at",
-        "id",
-        "user_id"
+        "id"
       )
       .transact(XA)
 
@@ -129,10 +148,7 @@ trait ItemQueries extends Queries {
         "where_sold",
         "storage_location",
         "photos_taken",
-        "created_at",
-        "updated_at",
-        "id",
-        "user_id"
+        "id"
       )
       .transact(XA)
 

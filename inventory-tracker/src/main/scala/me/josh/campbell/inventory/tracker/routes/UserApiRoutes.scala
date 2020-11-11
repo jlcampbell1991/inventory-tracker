@@ -18,9 +18,4 @@ object UserApiRoutes extends Routes {
         } yield response
     }
   }
-
-  def authedRoutes[F[_]: Sync: Transactor](implicit dsl: Http4sDsl[F]): HttpRoutes[F] = {
-    import dsl._
-    authedService((_: UserId) => HttpRoutes.empty)
-  }
 }

@@ -1,10 +1,10 @@
 package me.josh.campbell.inventory.tracker
 
-import cats.implicits._
+// import cats.implicits._
 import cats.effect.Sync
 import doobie._
 import doobie.implicits._
-import org.http4s._
+// import org.http4s._
 import java.util.UUID
 
 final case class PostId(value: UUID)

@@ -5,7 +5,7 @@ import org.http4s._
 import org.http4s.circe.CirceEntityCodec._
 // import org.http4s.Header
 import org.http4s.implicits._
-import org.http4s.twirl._
+// import org.http4s.twirl._
 
 final class ItemApiRoutesTest extends BaseTest {
   import DBDriver._
@@ -23,10 +23,7 @@ final class ItemApiRoutesTest extends BaseTest {
     where_sold = None,
     storage_location = "storage_location",
     photos_taken = true,
-    createdAt = None,
-    updatedAt = None,
-    id = None,
-    userId = None
+    id = None
   ).save[IO](user.userId.get).unsafeRunSync
 
   val destroyableItem: Item = item.copy(name = "destroy me!").save[IO](user.userId.get).unsafeRunSync
@@ -60,13 +57,13 @@ final class ItemApiRoutesTest extends BaseTest {
       Some(item)
     )
   }
-  """POST -> Root / "api" / "v1" / "item" / id / "update"""" in {
+  """POST -> Root / "api" / "v1" / "item" / "update"""" in {
     check[String](
       service.orNotFound
         .run(
           Request[IO](
             method = Method.POST,
-            uri = Uri.unsafeFromString(s"/api/v1/item/${item.id.get.value.toString}/update")
+            uri = Uri.unsafeFromString("/api/v1/item/update")
           ).withEntity(
               item.copy(name = "updated name")
             )
@@ -90,7 +87,7 @@ final class ItemApiRoutesTest extends BaseTest {
           )
         ),
       Status.Ok,
-      Some("Item ${destroyableItem.id.get.value.toString} destroyed")
+      Some(s"Item ${destroyableItem.id.get.value.toString} destroyed")
     )
   }
 }

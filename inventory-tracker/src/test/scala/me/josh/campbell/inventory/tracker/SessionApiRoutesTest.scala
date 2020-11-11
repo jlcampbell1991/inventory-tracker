@@ -4,7 +4,6 @@ import cats.effect.IO
 import org.http4s._
 import org.http4s.circe.CirceEntityCodec._
 import org.http4s.implicits._
-import org.http4s.twirl._
 
 final class SessionApiRoutesTest extends BaseTest {
   import DBDriver._
@@ -21,7 +20,7 @@ final class SessionApiRoutesTest extends BaseTest {
           )
         ),
       Status.Ok,
-      cookie
+      None
     )
   }
 }

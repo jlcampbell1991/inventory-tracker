@@ -15,14 +15,9 @@ object SessionApiRoutes extends Routes {
         for {
           session <- params.as[Session]
           user <- session.findUser
-          response <- user.fold(BadRequest(""))(u => Ok(Session.cookie(u).map(_.content)))
+          response <- user.fold(BadRequest("User does not exist"))(u => Ok(Session.cookie(u).map(_.content)))
         } yield response
       }
     }
-  }
-
-  def authedRoutes[F[_]: Sync: Transactor](implicit dsl: Http4sDsl[F]): HttpRoutes[F] = {
-    import dsl._
-    authedService((_: UserId) => HttpRoutes.empty)
   }
 }

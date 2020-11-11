@@ -1,11 +1,11 @@
 package me.josh.campbell.inventory.tracker
 
-import cats.implicits._
+// import cats.implicits._
 import cats.effect.Sync
-import org.http4s._
+// import org.http4s._
 import doobie._
 import doobie.implicits._
-import io.circe._, io.circe.generic.semiauto._, io.circe.generic.extras._
+import io.circe._, io.circe.generic.semiauto._
 import com.github.t3hnar.bcrypt._
 import java.util.UUID
 

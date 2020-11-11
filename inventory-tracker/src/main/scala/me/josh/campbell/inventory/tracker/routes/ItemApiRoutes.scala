@@ -8,11 +8,6 @@ import org.http4s._
 import doobie._
 
 object ItemApiRoutes extends Routes {
-  def publicRoutes[F[_]: Sync: Transactor](implicit dsl: Http4sDsl[F]): HttpRoutes[F] = {
-    import dsl._
-    HttpRoutes.empty
-  }
-
   def authedRoutes[F[_]: Sync: Transactor](implicit dsl: Http4sDsl[F]): HttpRoutes[F] = {
     import dsl._
     authedService((userId: UserId) =>
@@ -32,7 +27,7 @@ object ItemApiRoutes extends Routes {
             item <- req.as[Item].flatMap(_.save(userId))
             response <- Ok(item)
           } yield response
-        case req @ POST -> Root / "api" / "v1" / "item" / id / "update" =>
+        case req @ POST -> Root / "api" / "v1" / "item" / "update" =>
           for {
             item <- req.as[Item].flatMap(_.update(userId))
             response <- Ok(item)

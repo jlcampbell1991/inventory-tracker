@@ -1,9 +1,9 @@
 package me.josh.campbell.inventory.tracker
 
 import cats.effect.Sync
-import cats.implicits._
+// import cats.implicits._
 import org.http4s._
-import org.http4s.{Headers, ResponseCookie, UrlForm}
+import org.http4s.{Headers, ResponseCookie}
 import org.http4s.util.CaseInsensitiveString
 import org.reactormonk.{CryptoBits, PrivateKey}
 import doobie._

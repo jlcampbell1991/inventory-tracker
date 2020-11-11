@@ -7,7 +7,6 @@ val specs2V = "3.8.9"
 lazy val `inventory-tracker` =
   project
     .in(file("inventory-tracker"))
-    .enablePlugins(SbtTwirl)
     .enablePlugins(JavaAppPackaging)
     .settings(
       name := "inventory-tracker",

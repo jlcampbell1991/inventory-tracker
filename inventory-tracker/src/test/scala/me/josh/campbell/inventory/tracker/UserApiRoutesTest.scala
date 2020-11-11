@@ -1,10 +1,8 @@
 package me.josh.campbell.inventory.tracker
 
-import cats.effect.IO
 import org.http4s._
 import org.http4s.circe.CirceEntityCodec._
 import org.http4s.implicits._
-import org.http4s.twirl._
 
 final class UserApiRoutesTest extends BaseTest {
   import DBDriver._

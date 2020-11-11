@@ -1,13 +1,12 @@
 package me.josh.campbell.inventory.tracker
 
-import cats.data._
 import cats.effect._
 import cats.implicits._
 import org.http4s._
-import org.http4s.server._
 import org.scalactic.TypeCheckedTripleEquals
 import org.scalatest._
 import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 abstract class BaseTest extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with TypeCheckedTripleEquals {
@@ -27,6 +26,6 @@ abstract class BaseTest extends AnyFreeSpec with Matchers with ScalaCheckPropert
         )
       case None => true
     }
-    assert(actualResp.status == expectedStatus)
+    assert(actualResp.status == expectedStatus && bodyCheck)
   }
 }

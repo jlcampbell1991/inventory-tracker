@@ -1,9 +1,9 @@
 package me.josh.campbell.inventory.tracker
 
-import cats.implicits._
+// import cats.implicits._
 import cats.effect.Sync
 import doobie._
-import io.circe._, io.circe.generic.semiauto._
+import io.circe._ //, io.circe.generic.semiauto._
 import java.time.{LocalDate, LocalDateTime, Month}
 import java.time.format.DateTimeFormatter
 import java.util.UUID
